@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Pokémon Guesser</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <video autoplay loop id="bg-video">
+        <source src="bgvideo3.mp4" type="video/mp4">
+    </video>
+
+    <div class="container">
+        <h1 class="title">WHO'S THIS POKEMON?</h1>
+
+        <div class="difficulty-selector">
+            <button class="difficulty-btn easy" data-difficulty="easy">Easy</button>
+            <button class="difficulty-btn medium" data-difficulty="medium">Medium</button>
+            <button class="difficulty-btn hard" data-difficulty="hard">Hard</button>
+        </div>
+
+        <div class="game-area hidden" id="gameArea">
+            <div class="hints-container">
+                <div class="hint" id="hint1"></div>
+                <div class="hint" id="hint2"></div>
+                <div class="hint" id="hint3"></div>
+            </div>
+
+            <div class="pokemon-display">
+                <div class="pokemon-card" id="pokemonCard">
+                    <img class="pokemon-image" id="pokemonImage" alt="Pokémon">
+                </div>
+            </div>
+        </div>
+
+        <div class="guess-input">
+            <input type="text" id="guessInput" placeholder="Enter Pokémon Name">
+            <button id="submitGuess">SUBMIT</button>
+        </div>
+
+        <div class="result" id="result"></div>
+    </div>
+
+
+    <audio id="bgMusic" autoplay loop>
+        <source src="bg.mp3" type="audio/mp3">
+    </audio>
+
+    <audio id="correctSound">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="wrongSound">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <canvas class="particles"></canvas>
+
+    <script>
+        const POKEAPI = 'https://pokeapi.co/api/v2/';
+        let currentPokemon = null;
+        const bgMusic = document.getElementById('bgMusic');
+        const correctSound = document.getElementById('correctSound');
+        const wrongSound = document.getElementById('wrongSound');
+
+        // Particle Background
+        function createParticles() {
+            const canvas = document.querySelector('.particles');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            class Particle {
+                constructor() {
+                    this.reset();
+                }
+
+                reset() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2;
+                    this.speed = Math.random() * 0.5 + 0.1;
+                }
+
+                update() {
+                    this.y += this.speed;
+                    if (this.y > canvas.height) this.reset();
+                }
+
+                draw() {
+                    ctx.fillStyle = 'rgba(0, 243, 255, 0.5)';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
+                });
+                requestAnimationFrame(animate);
+            }
+
+            for (let i = 0; i < 100; i++) particles.push(new Particle());
+            animate();
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        async function getRandomPokemon(difficulty) {
+            let max = 898;
+            switch (difficulty) {
+                case 'easy': max = 151; break;
+                case 'medium': max = 386; break;
+                case 'hard': max = 898; break;
+            }
+
+            const id = Math.floor(Math.random() * max) + 1;
+            const response = await fetch(`${POKEAPI}pokemon/${id}`);
+            const data = await response.json();
+
+            return {
+                name: data.name,
+                id: data.id,
+                types: data.types.map(t => t.type.name),
+                abilities: data.abilities.map(a => a.ability.name),
+                image: data.sprites.other['official-artwork'].front_default,
+                generation: Math.ceil(id / 151)
+            };
+        }
+
+        function displayHints(pokemon, difficulty) {
+            const hints = {
+                easy: ['generation', 'type', 'firstLetter'],
+                medium: ['type', 'firstLetter'],
+                hard: ['firstLetter']
+            };
+
+            document.querySelectorAll('.hint').forEach(hint => hint.textContent = '');
+
+            hints[difficulty].forEach((hintType, index) => {
+                const hintElement = document.getElementById(`hint${index + 1}`);
+                switch (hintType) {
+                    case 'generation':
+                        hintElement.textContent = `Generation: ${pokemon.generation}`;
+                        break;
+                    case 'type':
+                        hintElement.textContent = `Type: ${pokemon.types.join(' / ')}`;
+                        break;
+                    case 'firstLetter':
+                        hintElement.textContent = `First Letter: ${pokemon.name[0].toUpperCase()}`;
+                        break;
+                }
+            });
+        }
+
+        async function startGame(difficulty) {
+            if (bgMusic.paused) {
+                bgMusic.volume = 0.3;
+                bgMusic.play();
+            }
+
+            document.getElementById('gameArea').classList.remove('hidden');
+            document.getElementById('result').textContent = '';
+            document.getElementById('guessInput').value = '';
+
+            currentPokemon = await getRandomPokemon(difficulty);
+            displayHints(currentPokemon, difficulty);
+
+            const img = document.getElementById('pokemonImage');
+            img.src = currentPokemon.image;
+            img.classList.remove('revealed');
+            document.getElementById('pokemonCard').style.animation = '';
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const video = document.getElementById('bg-video');
+            video.play().catch(error => {
+                // Autoplay was prevented, show fallback or handle error
+                video.muted = true;
+                video.play();
+            });
+        });
+
+        function checkAnswer() {
+            const guess = document.getElementById('guessInput').value.toLowerCase();
+            const resultDiv = document.getElementById('result');
+            const img = document.getElementById('pokemonImage');
+
+            img.classList.add('revealed');
+
+            if (guess === currentPokemon.name) {
+                resultDiv.style.textShadow = '0 0 10px #00ff00';
+                correctSound.play();
+                resultDiv.textContent = 'Correct! 🎉';
+                resultDiv.style.color = '#00ff00';
+            } else {
+                resultDiv.style.textShadow = '0 0 10px #ff0000';
+                wrongSound.play();
+                resultDiv.textContent = `Wrong! It was ${currentPokemon.name}!`;
+                resultDiv.style.color = '#ff0000';
+                document.getElementById('pokemonCard').style.animation = 'shake 0.4s';
+            }
+        }
+
+        // Event Listeners
+        document.querySelectorAll('.difficulty-btn').forEach(btn => {
+            btn.addEventListener('click', () => startGame(btn.dataset.difficulty));
+        });
+
+        document.getElementById('submitGuess').addEventListener('click', checkAnswer);
+        document.getElementById('guessInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkAnswer();
+        });
+
+        // Initialize
+        window.addEventListener('load', () => {
+            createParticles();
+            document.body.addEventListener('click', () => {
+                bgMusic.play();
+            }, { once: true });
+        });
+    </script>
+</body>
+
+</html>
