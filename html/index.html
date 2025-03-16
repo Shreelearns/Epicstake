@@ -8,7 +8,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="viewport" content="initial-scale=1, maximum-scale=1">
       <!-- site metas -->
-      <title>Casino</title>
+      <title>EpicStake</title>
       <meta name="keywords" content="">
       <meta name="description" content="">
       <meta name="author" content="">
@@ -254,7 +254,7 @@
                               "Step into Epic Gaming—Where Every Point Takes You Further!"
 
                            </p>
-                           <div class="book_bt"><a href="#" style="font-size: 2.5vh;">Register Now</a></div>
+                           <div class="book_bt"><a href="login/login.html" style="font-size: 2.5vh;">Register Now</a></div>
                         </div>
                      </div>
                      <div class="carousel-item">
@@ -264,7 +264,7 @@
                            <p class="banner_text" style="font-size: 2.3vh;margin-left: 260px;font-weight: 500;">
                               "Buy Points, Play Games, and Elevate Your Fun with EpicStake!"
                            </p>
-                           <div class="book_bt"><a href="#" style="font-size: 2.5vh;">Register Now</a></div>
+                           <div class="book_bt"><a href="login/login.html" style="font-size: 2.5vh;">Register Now</a></div>
                         </div>
                      </div>
                      <div class="carousel-item">
@@ -275,7 +275,7 @@
                               "Play, Compete, Repeat—EpicStake is Your Gateway to Fun!"
 
                            </p>
-                           <div class="book_bt"><a href="#" style="font-size: 2.5vh;">Register Now</a></div>
+                           <div class="book_bt"><a href="login/login.html" style="font-size: 2.5vh;">Register Now</a></div>
                         </div>
                      </div>
                      <div class="carousel-item">
@@ -287,7 +287,7 @@
                               "Challenge Yourself and Unlock New Levels of Fun at EpicStake!"
 
                            </p>
-                           <div class="book_bt"><a href="#" style="font-size: 2.5vh;">Register Now</a></div>
+                           <div class="book_bt"><a href="login/login.html" style="font-size: 2.5vh;">Register Now</a></div>
                         </div>
                      </div>
                   </div>
@@ -338,26 +338,54 @@
  
  <!-- Add this HTML -->
  <div class="modal-overlay" id="modalOverlay"></div>
- <div class="payment-modal" id="paymentModal">
-   <h3>Buy Points</h3>
-   <p>Purchase <span id="pointsAmount">100</span> points for ₹<span id="pointsPrice">10</span></p>
-   <div class="payment-form">
-     <input type="text" placeholder="Card Number (4111 1111 1111 1111)" required>
-     <input type="text" placeholder="MM/YY" required>
-     <input type="text" placeholder="CVV" required>
+ <div class="payment-modal" id="paymentModal" 
+  style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+         width: 380px; padding: 20px; background-color: white;padding-bottom: 20%;
+         border-radius: 12px; box-shadow: 0px 6px 15px rgba(0,0,0,0.3);
+         text-align: center; z-index: 1000; font-family: Arial, sans-serif;">
+
+   <h3 style="margin-bottom: 15px; color: #222; font-size: 22px; font-weight: bold;">Buy Points</h3>
+   
+   <p style="font-size: 18px; color: #444; font-weight: bold; margin-bottom: 15px;">
+      Purchase <span id="pointsAmount" style="color: #007bff;">100</span> 
+      points for ₹<span id="pointsPrice" style="color: #007bff;">10</span>
+   </p>
+
+   <div class="payment-form" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+     <input type="text" placeholder="Card Number (4111 1111 1111 1111)" required
+       style="padding: 10px; border: 2px solid #ccc; border-radius: 6px; 
+              font-size: 16px; width: 100%; text-align: center; font-weight: bold;">
+     <input type="text" placeholder="MM/YY" required
+       style="padding: 10px; border: 2px solid #ccc; border-radius: 6px; 
+              font-size: 16px; width: 100%; text-align: center; font-weight: bold;">
+     <input type="text" placeholder="CVV" required
+       style="padding: 10px; border: 2px solid #ccc; border-radius: 6px; 
+              font-size: 16px; width: 100%; text-align: center; font-weight: bold;">
    </div>
-   <div class="modal-actions">
-     <button class="confirm-btn" onclick="confirmPayment()">Pay Now</button>
-     <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+
+   <div class="modal-actions" 
+     style="display: flex; flex-direction: row; justify-content: space-evenly; margin-top: 20px;">
+     <button class="confirm-btn"   onclick="confirmPayment()"
+       style="background-color: rgb(32, 242, 21); color: white; font-size: 16px; font-weight: bold;
+              padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;
+              box-shadow: 0px 4px 8px rgba(0,0,0,0.2);">
+       Pay Now
+     </button>
+     <button class="cancel-btn"  
+       style="background-color: red; color: white; font-size: 16px; font-weight: bold;
+              padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;
+              box-shadow: 0px 4px 8px rgba(0,0,0,0.2);" 
+       onclick="closeModal()">
+       Cancel
+     </button>
    </div>
- </div>
+</div>
+
  
  <!-- Modified Game Section -->
  <div class="game_section layout_padding" style="background-color:white;">
    <div class="container">
-     <div class="points-display">
-       Points: <span id="totalPoints">0</span>
-     </div>
+     
      
      <h1 class="game_taital"><img src="images/icon-1.png"> <span>All games here</span></h1>
      <p class="game_text">established fact that a reader will be distracted by the readable content of a page when looking at its layout</p>
@@ -370,12 +398,7 @@
              <h1 class="number_text">01</h1>
              <h1 class="game_text_1">Memory Card</h1>
            </div>
-           <button class="points-btn" 
-                   data-points="50" 
-                   data-price="5"
-                   onclick="showPaymentModal(this)">
-             Buy 50 Points (₹5)
-           </button>
+          
            <div class="playnow_bt">
              <a href="games/memory cards ghost/index.html" onclick="return checkPoints(50)">Play Now</a>
            </div>
@@ -387,12 +410,7 @@
              <h1 class="number_text_1">02</h1>
              <h1 class="game_text_1">Guess Pokemon</h1>
            </div>
-           <button class="points-btn" 
-                   data-points="100" 
-                   data-price="10"
-                   onclick="showPaymentModal(this)">
-             Buy 100 Points (₹10)
-           </button>
+         
            <div class="playnow_bt">
              <a href="games/pokemon/homepage.html" onclick="return checkPoints(100)">Play Now</a>
            </div>
@@ -430,6 +448,10 @@
    document.getElementById('pointsAmount').textContent = selectedPackage.points;
    document.getElementById('pointsPrice').textContent = selectedPackage.price;
    
+   document.getElementById('paymentModal').style.height = '30vh';
+   document.getElementById('paymentModal').style.width = '20vw';
+   document.getElementById('paymentModal').style.fontSize = '2vh';
+
    document.getElementById('paymentModal').style.display = 'block';
    document.getElementById('modalOverlay').style.display = 'block';
  }
@@ -546,6 +568,9 @@
       <!-- casino section start -->
       <div class="casino_section layout_padding">
          <div class="container">
+            <div>
+               Points: <span id="totalPoints">0</span>
+             </div>
             <h1 class="casino_taital"><img src="images/icon-1.png"> <span>Our Price</span></h1>
             <p class="game_text">"Take Your Game to the Next Level: Buy Points with Real Money and Unlock Unlimited Fun!"</p>
             <div class="casino_section_2 layout_padding">
@@ -556,7 +581,10 @@
                         <h1 class="date_text"><span class="font_size_20">&#8377;</span><span class="font_size_40">10</span> / 100 points</h1>
                         <p class="lorem_text">"Get Started: Enjoy Access to Exciting Games!"</p>
                      </div>
-                     <div class="buynow_bt"><a href="#">Buy Now</a></div>
+                     <div class="buynow_bt"><a href="#" class="points-btn" 
+                        data-points="100" 
+                        data-price="10"
+                        onclick="showPaymentModal(this)">Buy Now</a></div>
                   </div>
                   <div class="col-sm-4">
                      <div class="box_main">
@@ -567,7 +595,10 @@
 
                         </p>
                      </div>
-                     <div class="buynow_bt"><a href="#">Buy Now</a></div>
+                     <div class="buynow_bt"><a href="#" class="points-btn" 
+                        data-points="300" 
+                        data-price="25"
+                        onclick="showPaymentModal(this)">Buy Now</a></div>
                   </div>
                   <div class="col-sm-4">
                      <div class="box_main">
@@ -575,7 +606,10 @@
                         <h1 class="date_text"><span class="font_size_20">&#8377;</span><span class="font_size_40">50</span> / 600 points</h1>
                         <p class="lorem_text">"Ultimate Access: More Points, More Playtime!"</p>
                      </div>
-                     <div class="buynow_bt"><a href="#">Buy Now</a></div>
+                     <div class="buynow_bt"><a href="#" class="points-btn" 
+                        data-points="600" 
+                        data-price="50"
+                        onclick="showPaymentModal(this)">Buy Now</a></div>
                   </div>
                </div>
             </div>
