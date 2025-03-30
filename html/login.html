@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Signup</title>
+    <link rel="stylesheet" href="login.css?v=1.0"> <!-- Cache Buster -->
+</head>
+<body>
+    <div class="wrapper">
+        <h2>Login & Signup</h2>
+
+        <div class="form-container">
+            <!-- Signup Form -->
+            <form id="signupForm">
+                <h3>Signup</h3>
+                <input type="email" id="signupEmail" placeholder="Email" required>
+                <input type="password" id="signupPassword" placeholder="Password" required>
+                <button type="submit">Signup</button>
+                <p id="signupMessage"></p>
+            </form>
+
+            <!-- Login Form -->
+            <form id="loginForm">
+                <h3>Login</h3>
+                <input type="email" id="loginEmail" placeholder="Email" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <button type="submit">Login</button>
+                <p id="loginMessage"></p>
+            </form>
+        </div>
+    </div>
+
+    <script src="login.js?v=1.0"></script> <!-- Cache Buster -->
+</body>
+</html>

@@ -458,7 +458,7 @@ button {
     width: 100%;
     float: left;
     background-image: url(../images/pika.jpg);
-    height: auto;
+    height: 50vh;
     background-size: cover;
     padding-bottom: 40px;
     border-radius: 30px;
@@ -481,10 +481,9 @@ button {
 .image_4 {
     width: 100%;
     float: left;
-    background-image: url(../images/img-4.png);
-    height: auto;
-    background-size: 100%;
-    padding-bottom: 40px;
+    background-image: url(../images/card2.avif);
+    height: 45vh;
+    background-size: cover;
     border-radius: 30px;
     background-repeat: no-repeat;
 }

@@ -15,7 +15,6 @@
             background-color: #1e1e1e;
             color: white;
             font-family: Arial, sans-serif;
-            position: relative;
         }
 
         canvas {
@@ -34,59 +33,58 @@
             color: white;
             cursor: pointer;
             transition: background-color 0.3s;
-            position: relative;
         }
 
         #spinButton:hover {
             background-color: #b3840e;
         }
 
-        .pointer {
-            width: 0;
-            height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 30px solid #d4a017;
-            position: absolute;
-            top: -40px; /* Position the arrow above the spin button */
-            left: calc(50% - 20px);
-            z-index: 10;
-            transform: rotate(180deg); /* Point the arrow downwards */
+        @keyframes highlight {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
     </style>
 </head>
 <body>
     <canvas id="wheelCanvas" width="500" height="500"></canvas>
-    <button id="spinButton">
-        <div class="pointer"></div>
-        Spin the Wheel
-    </button>
+    <button id="spinButton">Spin the Wheel</button>
 
     <script>
         const canvas = document.getElementById('wheelCanvas');
         const ctx = canvas.getContext('2d');
-        const sections = ["Mystery Prize", "100 Points", "Better Luck Next Time", "Free Spin", "200 Points", "Free Game Trial"];
-        const colors = ["#d11a2a", "#0b6623", "#9400D3", "#FFD700", "#FF1493", "#008000"];
+        const sections = [
+            "100 Points", 
+            "Free Spin", 
+            "200 Points", 
+            "Mystery Prize", 
+            "Better Luck Next Time", 
+            "Free Game Trial"
+        ];
+        const colors = ["#0b6623", "#FFD700", "#FF1493", "#d11a2a", "#9400D3", "#008000"];
         const sectionAngle = (2 * Math.PI) / sections.length;
         let rotation = 0;
         let isSpinning = false;
 
-        function drawWheel() {
+        function drawWheel(highlightIndex = -1) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const radius = canvas.width / 2;
             ctx.save();
             ctx.translate(radius, radius);
+            
             for (let i = 0; i < sections.length; i++) {
                 ctx.beginPath();
                 ctx.moveTo(0, 0);
                 ctx.arc(0, 0, radius, i * sectionAngle, (i + 1) * sectionAngle);
-                ctx.fillStyle = colors[i];
+                ctx.fillStyle = i === highlightIndex ? '#ffffff' : colors[i]; // Highlight winner
                 ctx.fill();
                 ctx.strokeStyle = '#d4a017';
                 ctx.lineWidth = 10;
                 ctx.stroke();
+                
+                // Text labels
                 ctx.save();
-                ctx.fillStyle = 'white';
+                ctx.fillStyle = i === highlightIndex ? '#000000' : 'white';
                 ctx.font = '20px Arial';
                 ctx.rotate((i + 0.5) * sectionAngle);
                 ctx.textAlign = 'center';
@@ -99,14 +97,17 @@
         function spinWheel() {
             if (isSpinning) return;
             isSpinning = true;
-            const spinTime = 4000; // Increased spin time for slower spin
-            const spinSpeed = (Math.random() * 5 + 5) * Math.PI; // Reduced speed for slower spin
-            const start = performance.now();
+            
+            // Random final angle calculation
+            const targetRotation = rotation + (Math.random() * 10 + 10) * Math.PI;
+            const spinDuration = 4000;
+            const startTime = Date.now();
 
-            function animate(time) {
-                const elapsed = time - start;
-                if (elapsed < spinTime) {
-                    rotation += spinSpeed * (1 - elapsed / spinTime);
+            function animate() {
+                const progress = (Date.now() - startTime) / spinDuration;
+                
+                if (progress < 1) {
+                    rotation = targetRotation * easeOutCubic(progress);
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.save();
                     ctx.translate(canvas.width / 2, canvas.height / 2);
@@ -116,22 +117,53 @@
                     ctx.restore();
                     requestAnimationFrame(animate);
                 } else {
-                    isSpinning = false;
-                    rotation %= 2 * Math.PI;
-                    const winningIndex = Math.floor((sections.length - (rotation / sectionAngle)) % sections.length);
-                    alert('You won: ' + sections[winningIndex]);
+                    // Final calculation
+                    const finalRotation = targetRotation % (2 * Math.PI);
+                    const winningIndex = Math.floor((sections.length - (finalRotation / sectionAngle)) % sections.length);
+                    
+                    // Visual feedback
+                    drawWheel(winningIndex);
+                    setTimeout(() => {
+                        alert(`You won: ${sections[winningIndex]}`);
+                        updatePoints(sections[winningIndex]);
+                        isSpinning = false;
+                    }, 500);
                 }
             }
-            requestAnimationFrame(animate);
+
+            // Easing function for smooth spin
+            function easeOutCubic(t) {
+                return 1 - Math.pow(1 - t, 3);
+            }
+
+            animate();
         }
 
+        function updatePoints(winningSection) {
+            let points = 0;
+            switch(winningSection) {
+                case '100 Points': points = 100; break;
+                case '200 Points': points = 200; break;
+                case 'Mystery Prize': points = Math.floor(Math.random() * 150) + 50; break;
+                default: points = 0;
+            }
+            
+            // Update points in storage
+            const currentPoints = parseInt(localStorage.getItem('gamePoints') || 0) + points;
+            localStorage.setItem('gamePoints', currentPoints);
+            
+            // Update UI (assuming you have element with id="totalPoints")
+            if (document.getElementById('totalPoints')) {
+                document.getElementById('totalPoints').textContent = currentPoints;
+            }
+        }
+
+        // Initial draw
         drawWheel();
         document.getElementById('spinButton').addEventListener('click', spinWheel);
     </script>
 </body>
 </html>
-
-
 
 
 
