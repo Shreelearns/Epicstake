@@ -505,10 +505,9 @@ button {
 .image_5 {
     width: 100%;
     float: left;
-    background-image: url(../images/img-5.png);
-    height: auto;
-    background-size: 100%;
-    padding-bottom: 40px;
+    background-image: url(../images/cave.avif);
+    height: 45vh;
+    background-size: cover;
     border-radius: 30px;
     background-repeat: no-repeat;
 }
